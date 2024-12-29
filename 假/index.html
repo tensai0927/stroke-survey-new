@@ -10,7 +10,7 @@
             line-height: 1.6;
             margin: 0;
             padding: 0;
-            background-color: #f7f7f7;
+            background-color: #f2f9ff;
             color: #333;
         }
         .container {
@@ -18,43 +18,56 @@
             margin: 50px auto;
             padding: 20px;
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #1f93d6;
+            text-align: center;
         }
         h1 {
-            color: #d32f2f;
-        }
-        h2 {
-            color: #333;
+            margin-bottom: 20px;
         }
         .options {
             margin-top: 20px;
         }
         .options label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .options label:hover {
+            color: #1f93d6;
+        }
+        .options input {
+            margin-right: 10px;
         }
         .button {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #d32f2f;
+            display: block;
+            margin: 30px auto 0;
+            padding: 12px 25px;
+            background-color: #1f93d6;
             color: white;
             text-decoration: none;
-            border-radius: 4px;
+            border-radius: 5px;
             text-align: center;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
         }
         .button:hover {
-            background-color: #b71c1c;
+            background-color: #155a8a;
         }
         .warning {
             font-weight: bold;
-            color: #d32f2f;
+            color: #d62c1f;
             text-align: center;
             font-size: 1.2em;
+            margin-top: 20px;
         }
         .final-title {
-            color: #d32f2f;
+            color: #d62c1f;
             text-align: center;
         }
     </style>
@@ -68,10 +81,11 @@
     <div class="container" id="page2" style="display: none;">
         <h2>請問您近期是否有發生下列可能影響步態的情況</h2>
         <div class="options">
-            <label><input type="radio" name="question1"> 24小時內有飲酒</label>
-            <label><input type="radio" name="question1"> 一週內頭部有受到劇烈撞擊</label>
-            <label><input type="radio" name="question1"> 一週內腳部有受傷</label>
-            <label><input type="radio" name="question1"> 其他</label>
+            <label><input type="radio" name="question1" value="無"> 無</label>
+            <label><input type="radio" name="question1" value="飲酒"> 24小時內有飲酒</label>
+            <label><input type="radio" name="question1" value="撞擊"> 一週內頭部有受到劇烈撞擊</label>
+            <label><input type="radio" name="question1" value="受傷"> 一週內腳部有受傷</label>
+            <label><input type="radio" name="question1" value="其他"> 其他</label>
         </div>
         <a href="#" class="button" onclick="showPage(3)">下一步</a>
     </div>
@@ -79,18 +93,19 @@
     <div class="container" id="page3" style="display: none;">
         <h2>請問剛剛在您步態不穩時，是否有出現以下症狀</h2>
         <div class="options">
-            <label><input type="radio" name="question2"> 無法控制臉部表情</label>
-            <label><input type="radio" name="question2"> 口齒不清</label>
-            <label><input type="radio" name="question2"> 短暫失明</label>
-            <label><input type="radio" name="question2"> 其他</label>
+            <label><input type="radio" name="question2" value="無"> 無</label>
+            <label><input type="radio" name="question2" value="表情"> 無法控制臉部表情</label>
+            <label><input type="radio" name="question2" value="口齒"> 口齒不清</label>
+            <label><input type="radio" name="question2" value="失明"> 短暫失明</label>
+            <label><input type="radio" name="question2" value="其他"> 其他</label>
         </div>
-        <a href="#" class="button" onclick="showPage(4)">下一步</a>
+        <a href="#" class="button" onclick="evaluateResults()">完成</a>
     </div>
 
     <div class="container" id="page4" style="display: none;">
-        <h2 class="final-title">我們懷疑你似乎有中風的症狀</h2>
-        <p class="warning">建議立刻到醫院檢查！！</p>
-        <a href="#" class="button" onclick="alert('請務必儘快就醫！')">完成</a>
+        <h2 class="final-title" id="resultTitle"></h2>
+        <p class="warning" id="resultMessage"></p>
+        <a href="#" class="button" onclick="restartQuiz()">重新填寫</a>
     </div>
 
     <script>
@@ -99,6 +114,36 @@
             pages.forEach(page => page.style.display = 'none');
             document.getElementById(`page${pageNumber}`).style.display = 'block';
         }
+
+        function evaluateResults() {
+            const question1 = document.querySelector('input[name="question1"]:checked');
+            const question2 = document.querySelector('input[name="question2"]:checked');
+
+            if (!question1 || !question2) {
+                alert('請完成所有問題後再提交！');
+                return;
+            }
+
+            const isAllNo = question1.value === '無' && question2.value === '無';
+
+            document.getElementById('resultTitle').textContent = isAllNo
+                ? '我們懷疑你似乎有中風的症狀'
+                : '請隨時注意自己的健康狀態';
+
+            document.getElementById('resultMessage').textContent = isAllNo
+                ? '建議立刻到醫院檢查！！'
+                : '請保持健康的生活方式並定期檢查！';
+
+            showPage(4);
+        }
+
+        function restartQuiz() {
+            const inputs = document.querySelectorAll('input[type="radio"]');
+            inputs.forEach(input => input.checked = false);
+            showPage(1);
+        }
     </script>
 </body>
 </html>
+
+
