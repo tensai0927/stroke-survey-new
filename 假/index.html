@@ -74,7 +74,7 @@
 </head>
 <body>
     <div class="container" id="page1">
-        <h1>剛剛檢測到你走路有問題，花一分鐘填個問卷，確認一下你有沒有中風吧！</h1>
+        <h1>剛剛檢測到你的步態有異常，花一分鐘填個問卷，確認一下你有沒有中風吧！</h1>
         <a href="#" class="button" onclick="showPage(2)">開始問卷</a>
     </div>
 
@@ -127,12 +127,12 @@
             const isAllNo = question1.value === '無' && question2.value === '無';
 
             document.getElementById('resultTitle').textContent = isAllNo
-                ? '我們懷疑你似乎有中風的症狀'
-                : '請隨時注意自己的健康狀態';
+                ? '請隨時注意自己的健康狀態'
+                : '我們懷疑你似乎有中風的症狀';
 
             document.getElementById('resultMessage').textContent = isAllNo
-                ? '建議立刻到醫院檢查！！'
-                : '請保持健康的生活方式並定期檢查！';
+                ? '請保持健康的生活方式並定期檢查！'
+                : '建議立刻到醫院檢查！！';
 
             showPage(4);
         }
@@ -145,5 +145,3 @@
     </script>
 </body>
 </html>
-
-
