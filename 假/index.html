@@ -70,6 +70,13 @@
             color: #d62c1f;
             text-align: center;
         }
+        .loading {
+            text-align: center;
+            color: #888;
+            font-size: 1.1em;
+            margin-top: 20px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -81,11 +88,11 @@
     <div class="container" id="page2" style="display: none;">
         <h2>請問您近期是否有發生下列可能影響步態的情況</h2>
         <div class="options">
-            <label><input type="radio" name="question1" value="無"> 無</label>
-            <label><input type="radio" name="question1" value="飲酒"> 24小時內有飲酒</label>
-            <label><input type="radio" name="question1" value="撞擊"> 一週內頭部有受到劇烈撞擊</label>
-            <label><input type="radio" name="question1" value="受傷"> 一週內腳部有受傷</label>
-            <label><input type="radio" name="question1" value="其他"> 其他</label>
+            <label><input type="checkbox" name="question1" value="無"> 無</label>
+            <label><input type="checkbox" name="question1" value="飲酒"> 24小時內有飲酒</label>
+            <label><input type="checkbox" name="question1" value="撞擊"> 一週內頭部有受到劇烈撞擊</label>
+            <label><input type="checkbox" name="question1" value="受傷"> 一週內腳部有受傷</label>
+            <label><input type="checkbox" name="question1" value="其他"> 其他</label>
         </div>
         <a href="#" class="button" onclick="showPage(3)">下一步</a>
     </div>
@@ -93,13 +100,14 @@
     <div class="container" id="page3" style="display: none;">
         <h2>請問剛剛在您步態不穩時，是否有出現以下症狀</h2>
         <div class="options">
-            <label><input type="radio" name="question2" value="無"> 無</label>
-            <label><input type="radio" name="question2" value="表情"> 無法控制臉部表情</label>
-            <label><input type="radio" name="question2" value="口齒"> 口齒不清</label>
-            <label><input type="radio" name="question2" value="失明"> 短暫失明</label>
-            <label><input type="radio" name="question2" value="其他"> 其他</label>
+            <label><input type="checkbox" name="question2" value="無"> 無</label>
+            <label><input type="checkbox" name="question2" value="表情"> 無法控制臉部表情</label>
+            <label><input type="checkbox" name="question2" value="口齒"> 口齒不清</label>
+            <label><input type="checkbox" name="question2" value="失明"> 短暫失明</label>
+            <label><input type="checkbox" name="question2" value="其他"> 其他</label>
         </div>
         <a href="#" class="button" onclick="evaluateResults()">完成</a>
+        <p class="loading" id="loadingMessage">等待中...</p>
     </div>
 
     <div class="container" id="page4" style="display: none;">
@@ -116,30 +124,37 @@
         }
 
         function evaluateResults() {
-            const question1 = document.querySelector('input[name="question1"]:checked');
-            const question2 = document.querySelector('input[name="question2"]:checked');
+            const loadingMessage = document.getElementById('loadingMessage');
+            loadingMessage.style.display = 'block';
 
-            if (!question1 || !question2) {
+            const selectedQuestion1 = Array.from(document.querySelectorAll('input[name="question1"]:checked')).map(input => input.value);
+            const selectedQuestion2 = Array.from(document.querySelectorAll('input[name="question2"]:checked')).map(input => input.value);
+
+            if (selectedQuestion1.length === 0 || selectedQuestion2.length === 0) {
                 alert('請完成所有問題後再提交！');
+                loadingMessage.style.display = 'none';
                 return;
             }
 
-            const isAllNo = question1.value === '無' && question2.value === '無';
+            setTimeout(() => {
+                const isAllNo = selectedQuestion1.includes('無') && selectedQuestion1.length === 1 &&
+                                selectedQuestion2.includes('無') && selectedQuestion2.length === 1;
 
-            document.getElementById('resultTitle').textContent = isAllNo
-                ? '請隨時注意自己的健康狀態'
-                : '我們懷疑你似乎有中風的症狀';
+                document.getElementById('resultTitle').textContent = isAllNo
+                    ? '請隨時注意自己的健康狀態'
+                    : '我們懷疑你似乎有中風的症狀';
 
-            document.getElementById('resultMessage').textContent = isAllNo
-                ? '請保持健康的生活方式並定期檢查！'
-                : '建議立刻到醫院檢查！！';
+                document.getElementById('resultMessage').textContent = isAllNo
+                    ? '請保持健康的生活方式並定期檢查！'
+                    : '建議立刻到醫院檢查！！';
 
-            showPage(4);
+                loadingMessage.style.display = 'none';
+                showPage(4);
+            }, 2000); // 模擬處理延遲 2 秒
         }
 
         function restartQuiz() {
-            const inputs = document.querySelectorAll('input[type="radio"]');
-            inputs.forEach(input => input.checked = false);
+            document.querySelectorAll('input[type="checkbox"]').forEach(input => input.checked = false);
             showPage(1);
         }
     </script>
